@@ -57,6 +57,8 @@ public class controller {
 			pw.close();
 			write.close();
 			
+			System.out.println("total execution time: " + total_time);
+			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
