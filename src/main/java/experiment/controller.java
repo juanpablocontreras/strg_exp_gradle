@@ -9,14 +9,16 @@ import java.io.PrintWriter;
 
 
 public class controller {
+	
 
-	
-	
 	public static void main(String[] args) {
+		
+		//set up the experiment settings
+		Settings setting = new Settings();
+		setting.getSettings();
+		
 		// initiates the request creator, IO queue, request handler, and request transmitter
-		int ioQueueCapacity = 20;
-		int numIORequestsPerDataTransfer = 20;
-		SyncListIOQueue ioqueue = new SyncListIOQueue(ioQueueCapacity);
+		SyncListIOQueue ioqueue = new SyncListIOQueue(setting.maxQueueCapacity);
 		long startTime;
 		long endTime;
 		long total_time;
@@ -33,12 +35,12 @@ public class controller {
 					"EXP_TARGET",
 					"juan",
 					"LapinCoquin13",
-					"Small100");
+					setting.databaseTableName);
 			
 			Transmitter sqlTransmitter = new SqlRequestTransmitter();
 			RequestHandler handler = new RequestHandler(
 					ioqueue, 
-					numIORequestsPerDataTransfer,
+					setting.numberOfIOrequestsPerDataTransfer,
 					sqlTransmitter);
 			
 			startTime = System.currentTimeMillis();
@@ -64,6 +66,8 @@ public class controller {
 			e.printStackTrace();
 		}
 	}
+	
+
 	
 }
 
