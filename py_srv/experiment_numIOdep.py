@@ -8,9 +8,9 @@ import os
 strg_exp_gradle_path = os.path.realpath('..')
 settings_path = strg_exp_gradle_path + "/exp_settings/exp_settings.txt"
 
-queueSizes = [20] #[20, 60, 100]
-variableIOperDT = [1] #[1, 10, 25, 50, 100]
-tables = ["Small100"] #["Small100", "Med1000", "Large65535"]
+queueSizes = [20, 60, 100]
+variableIOperDT = [1, 10, 25, 50, 100]
+tables = ["Small100", "Med1000", "Large65535"]
 
 #build java experiment
 os.system("cd .. \n ./gradlew clean build")
@@ -36,8 +36,5 @@ for tableName in tables:
 
             #run java experiment
             os.system("cd .. \n ./gradlew run")
-
-            #copy logs to results folder
-            
 
     print("table: " + tableName)
