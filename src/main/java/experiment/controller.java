@@ -37,11 +37,13 @@ public class controller {
 					"LapinCoquin13",
 					setting.databaseTableName);
 			
+			String logIdentifier = setting.databaseTableName + "Q" + setting.maxQueueCapacity + "IO" + setting.numberOfIOrequestsPerDataTransfer;
 			Transmitter sqlTransmitter = new SqlRequestTransmitter();
 			RequestHandler handler = new RequestHandler(
 					ioqueue, 
 					setting.numberOfIOrequestsPerDataTransfer,
-					sqlTransmitter);
+					sqlTransmitter,
+					logIdentifier);
 			
 			startTime = System.currentTimeMillis();
 			
@@ -53,7 +55,7 @@ public class controller {
 			total_time = endTime - startTime;
 			
 			//write time to file
-			FileWriter write = new FileWriter(logFolderPath + "/total_time",false);
+			FileWriter write = new FileWriter(logFolderPath + "/total_time" + logIdentifier,false);
 			PrintWriter pw = new PrintWriter(write);
 			pw.print(total_time);
 			pw.close();

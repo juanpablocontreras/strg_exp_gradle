@@ -37,4 +37,7 @@ for tableName in tables:
             #run java experiment
             os.system("cd .. \n ./gradlew run")
 
+            #copy logs to results folder
+            
+
     print("table: " + tableName)

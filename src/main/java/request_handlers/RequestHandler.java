@@ -19,13 +19,15 @@ public class RequestHandler extends Thread{
 	protected boolean wasLastItemProcessed = false;
 	
 	protected String logFolderPath = "logs";
+	protected String logIdentifier;
 	protected PrintWriter printQueueLog_line;
 	protected PrintWriter printTrsmLog_line;
 	
 	public RequestHandler(	
 			SyncListIOQueue requestQeue,
 			int numIOrequestsPerDataTransfer, 
-			Transmitter transmitter) throws Exception
+			Transmitter transmitter,
+			String logIdentifier) throws Exception
 	{
 		if(requestQeue == null) {
 			throw new Exception("constructor queue not initialized");
@@ -33,6 +35,7 @@ public class RequestHandler extends Thread{
 		this.ioRequestQueue = requestQeue;
 		this.numIOrequestsPerDataTransfer = numIOrequestsPerDataTransfer;
 		this.transmitter = transmitter;
+		this.logIdentifier = logIdentifier;
 	}
 	
 	
@@ -70,6 +73,7 @@ public class RequestHandler extends Thread{
 				
 				closPrinters();
 			}
+			
 		}catch(Exception e){
 			System.out.println(e);
 		}
@@ -132,7 +136,6 @@ public class RequestHandler extends Thread{
 					//check if last item was processed
 					if(request.isLastItem) {
 						this.wasLastItemProcessed = true;
-						closPrinters();
 						System.out.println("All items processed. experiment finished");
 					}
 				}
@@ -148,8 +151,8 @@ public class RequestHandler extends Thread{
 	}
 	
 	private void setUpLogPrinters(boolean append_to_file) throws Exception {
-		FileWriter writeQ = new FileWriter(this.logFolderPath + "/queuelog",append_to_file);
-		FileWriter writeT = new FileWriter(this.logFolderPath + "/trsmlog",append_to_file);
+		FileWriter writeQ = new FileWriter(this.logFolderPath + "/queuelog" + this.logIdentifier, append_to_file);
+		FileWriter writeT = new FileWriter(this.logFolderPath + "/trsmlog" + this.logIdentifier, append_to_file);
 		
 		this.printQueueLog_line = new PrintWriter(writeQ);
 		this.printTrsmLog_line = new PrintWriter(writeT);

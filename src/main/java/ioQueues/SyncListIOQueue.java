@@ -59,5 +59,9 @@ public class SyncListIOQueue {
 			this.queue.forEach((temp) -> System.out.println(temp.id));
 		}
 	}
+	
+	public int getMaxSize() {
+		return this.maxSize;
+	}
 
 }
