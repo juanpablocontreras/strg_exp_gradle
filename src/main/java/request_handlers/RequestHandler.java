@@ -1,5 +1,6 @@
 package request_handlers;
 
+import experiment.Handler_setter;
 import request_types.*;
 import request_transmitters.*;
 import ioQueues.*;
@@ -11,12 +12,11 @@ public class RequestHandler extends Thread{
 	
 	//Fields
 	protected SyncListIOQueue ioRequestQueue; //reference to the IORequestQueue
-	protected int numIOrequestsPerDataTransfer = 1;
-	protected int interIOprocessTime = 100;
 	protected int pollingTime = 100; //amount of time between unsuccessful polls
 	protected int numAttempts = 10; //number of attempts to get item from queue before proceeding to the data transfer anyway
 	protected Transmitter transmitter;
 	protected boolean wasLastItemProcessed = false;
+	protected Handler_setter settings;
 	
 	protected String logFolderPath = "logs";
 	protected String logIdentifier;
@@ -25,7 +25,6 @@ public class RequestHandler extends Thread{
 	
 	public RequestHandler(	
 			SyncListIOQueue requestQeue,
-			int numIOrequestsPerDataTransfer, 
 			Transmitter transmitter,
 			String logIdentifier) throws Exception
 	{
@@ -33,7 +32,6 @@ public class RequestHandler extends Thread{
 			throw new Exception("constructor queue not initialized");
 		}
 		this.ioRequestQueue = requestQeue;
-		this.numIOrequestsPerDataTransfer = numIOrequestsPerDataTransfer;
 		this.transmitter = transmitter;
 		this.logIdentifier = logIdentifier;
 	}
@@ -44,6 +42,11 @@ public class RequestHandler extends Thread{
 		//Perform Data transfers until application is closed
 		
 		try {
+			
+			//get settings
+			this.settings = new Handler_setter();
+			this.settings.getSettings();
+			
 			//list to hold the IO requests for one data transfer
 			ArrayList<IORequest> dataTransferIORequests;
 			
@@ -67,7 +70,7 @@ public class RequestHandler extends Thread{
 				if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
 					logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
 				}else {
-					System.out.println("No Requests...");
+					//System.out.println("No Requests...");
 					Thread.sleep(pollingTime);
 				}
 				
@@ -75,7 +78,9 @@ public class RequestHandler extends Thread{
 			}
 			
 		}catch(Exception e){
+			System.out.println("Handler error: ");
 			System.out.println(e);
+			//throw e;
 		}
 		
 		
@@ -87,7 +92,7 @@ public class RequestHandler extends Thread{
 		IORequest tempRequest;
 		
 		//GET all IO requests for the data transfer into the cached list
-		int dataTransSize = this.numIOrequestsPerDataTransfer;
+		int dataTransSize = this.settings.number_of_IO_requests_per_data_transfer;
 		while(dataTransSize > 0) {
 			
 			//try getting an item from the IO queue
@@ -107,7 +112,7 @@ public class RequestHandler extends Thread{
 			dataTransferIORequests.add(tempRequest); //add request to data transfer cached list
 			dataTransSize--;
 			
-			Thread.sleep(interIOprocessTime);
+			Thread.sleep(this.settings.inter_IO_processing_time);
 		}
 		
 		return dataTransferIORequests;
@@ -123,9 +128,7 @@ public class RequestHandler extends Thread{
 				ArrayList<Long> transmitterTimes = new ArrayList<Long>();
 				
 				//set up connection
-				IORequest temReq = dataTransferIORequests.get(0);
-				String[] params = temReq.targetConnectionParams;
-				this.transmitter.setUpConnection(params);
+				this.transmitter.setUpConnection();
 				
 				//transmit the data
 				transmitterTimes.add(System.currentTimeMillis());
@@ -136,7 +139,7 @@ public class RequestHandler extends Thread{
 					//check if last item was processed
 					if(request.isLastItem) {
 						this.wasLastItemProcessed = true;
-						System.out.println("All items processed. experiment finished");
+						//System.out.println("All items processed. experiment finished");
 					}
 				}
 				

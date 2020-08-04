@@ -4,6 +4,7 @@ import request_creators.*;
 import request_transmitters.*;
 import request_handlers.*;
 import ioQueues.*;
+import experiment.Controller_setter;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 
@@ -11,14 +12,14 @@ import java.io.PrintWriter;
 public class controller {
 	
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		
 		//set up the experiment settings
-		Settings setting = new Settings();
-		setting.getSettings();
+		Controller_setter setting = new Controller_setter();
+		
 		
 		// initiates the request creator, IO queue, request handler, and request transmitter
-		SyncListIOQueue ioqueue = new SyncListIOQueue(setting.maxQueueCapacity);
+		SyncListIOQueue ioqueue = new SyncListIOQueue(setting.maxQueueSize);
 		long startTime;
 		long endTime;
 		long total_time;
@@ -28,22 +29,9 @@ public class controller {
 		
 		try {
 			
-			//Instantiate SQL request creator
-			SqlRCreator creator = new SqlRCreator(
-					ioqueue, 
-					"EXP_ORIG",
-					"EXP_TARGET",
-					"juan",
-					"LapinCoquin13",
-					setting.databaseTableName);
-			
-			String logIdentifier = setting.databaseTableName + "Q" + setting.maxQueueCapacity + "IO" + setting.numberOfIOrequestsPerDataTransfer;
+			SqlRCreator creator = new SqlRCreator(ioqueue);
 			Transmitter sqlTransmitter = new SqlRequestTransmitter();
-			RequestHandler handler = new RequestHandler(
-					ioqueue, 
-					setting.numberOfIOrequestsPerDataTransfer,
-					sqlTransmitter,
-					logIdentifier);
+			RequestHandler handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
 			
 			startTime = System.currentTimeMillis();
 			
@@ -55,17 +43,18 @@ public class controller {
 			total_time = endTime - startTime;
 			
 			//write time to file
-			FileWriter write = new FileWriter(logFolderPath + "/total_time" + logIdentifier,false);
+			FileWriter write = new FileWriter(logFolderPath + "/total_time" + setting.logIdentifier,false);
 			PrintWriter pw = new PrintWriter(write);
 			pw.print(total_time);
 			pw.close();
 			write.close();
 			
-			System.out.println("total execution time: " + total_time);
+			System.out.println("total execution time for " + setting.logIdentifier + ": " + total_time);
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			throw e;
 		}
 	}
 	

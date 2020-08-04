@@ -27,7 +27,7 @@ dependencies {
     implementation 'com.google.guava:guava:29.0-jre'
     
     //mysql dependency
-    implementation "mysql:mysql-connector-java:6.0.6"
+    implementation "mysql:mysql-connector-java:8.0.11"
 
     // Use JUnit test framework
     testImplementation 'junit:junit:4.13'

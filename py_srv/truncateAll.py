@@ -3,9 +3,9 @@
 import mysql.connector
 
 cnx_target = mysql.connector.connect(
-                               user='juan',
-							   password='LapinCoquin13',
-							   host='127.0.0.1',
+                               user='admin',
+							   password='Matusalen13',
+							   host='target-instance.cauebsweajza.us-east-2.rds.amazonaws.com',
 							   database='EXP_TARGET')
 
 
