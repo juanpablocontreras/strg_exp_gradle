@@ -164,14 +164,14 @@ public class RequestHandler extends Thread{
 	private void logQueueTimes(ArrayList<IORequest> requests) {
 		for(IORequest request:requests) {
 			printQueueLog_line.print(request.queueTimePolled-request.queueTimeArrival);
-			printQueueLog_line.print(",");
+			printQueueLog_line.print("\n");
 		}
 	}
 	
 	private void logTransmitterTimes(ArrayList<Long> transmitterTimes) {
 		for(int i=1;i<transmitterTimes.size();i++) {
 			printTrsmLog_line.print(transmitterTimes.get(i)-transmitterTimes.get(i-1));
-			printTrsmLog_line.print(",");
+			printTrsmLog_line.print("\n");
 		}
 	}
 	
