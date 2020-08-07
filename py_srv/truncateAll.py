@@ -1,27 +1,23 @@
 #delete all data from small, medium, and large tables of target db
+import Truncator
 
-import mysql.connector
+t = Truncator.Truncator()
 
-cnx_target = mysql.connector.connect(
-                               user='admin',
-							   password='Matusalen13',
-							   host='target-instance.cauebsweajza.us-east-2.rds.amazonaws.com',
-							   database='EXP_TARGET')
+#ORIGIN
+t.truncate("127.0.1", "EXP_ORIG", "juan", "LapinCoquin13", "Small100")
+t.truncate("127.0.1", "EXP_ORIG", "juan", "LapinCoquin13", "Med1000")
+t.truncate("127.0.1", "EXP_ORIG", "juan", "LapinCoquin13", "Large65535")
 
-
-cursor = cnx_target.cursor()
-
-deleteQuery = "TRUNCATE TABLE "
-
-cursor.execute(deleteQuery + "Small100;")
-cnx_target.commit()
-
-cursor.execute(deleteQuery + "Med1000;")
-cnx_target.commit()
-
-cursor.execute(deleteQuery + "Large65535;")
-cnx_target.commit()
+t.truncate("127.0.1", "EXP_TARGET", "juan", "LapinCoquin13", "Small100")
+t.truncate("127.0.1", "EXP_TARGET", "juan", "LapinCoquin13", "Med1000")
+t.truncate("127.0.1", "EXP_TARGET", "juan", "LapinCoquin13", "Large65535")
 
 
-cursor.close()
-cnx_target.close()
+
+
+
+
+
+
+
+

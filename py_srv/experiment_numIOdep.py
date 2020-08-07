@@ -4,16 +4,44 @@
 #tables: Small100, Med1000, Large65535
 
 import os
+import Truncator
 
+#paths
 strg_exp_gradle_path = os.path.realpath('..')
-settings_path = strg_exp_gradle_path + "/exp_settings/exp_settings.txt"
+path_settings = strg_exp_gradle_path + "/exp_settings"
 
+path_controller_settings = path_settings + "/controller_settings.txt"
+path_handler_settings = path_settings + "/handler_settings.txt"
+path_creator_settings = path_settings + "/creator_settings.txt"
+path_trsm_settings = path_settings + "/trsm_settings.txt"
+
+#ORIGIN database connectivity
+orig_connection_string = "jdbc:mysql://orig-instance.cauebsweajza.us-east-2.rds.amazonaws.com:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
+orig_username = "juan"
+orig_password = "LapinCoquin13"
+total_items_to_transmit = 1000
+
+
+#TARGET database connectivity
+target_connection_string = "jdbc:mysql://target-instance.cauebsweajza.us-east-2.rds.amazonaws.com:3306/EXP_TARGET?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
+target_host = "target-instance.cauebsweajza.us-east-2.rds.amazonaws.com" #used for truncate
+target_database_name = "EXP_TARGET" #used for truncate
+target_username = "juan"
+target_password = "LapinCoquin13"
+
+#experiment variable settings
 queueSizes = [20, 60, 100]
-variableIOperDT = [1, 10, 25, 50, 100]
+variableIOperDT = [1, 50, 100]
 tables = ["Small100", "Med1000", "Large65535"]
+inter_io_processing_time = 10
 
 #build java experiment
 os.system("cd .. \n ./gradlew clean build")
+
+#truncator
+truncator = Truncator.Truncator()
+
+
 
 for tableName in tables:
     #for each table in origin database, transfer all the data to the target database table with the same name
@@ -22,17 +50,51 @@ for tableName in tables:
 
         for numIOrequestsPerDataTransfer in variableIOperDT:
 
-            #write settings
-            settings_file = open(settings_path, "w")
-            settings_file.write(str(maxQueueSize))
-            settings_file.write("\n")
-            settings_file.write(str(numIOrequestsPerDataTransfer))
-            settings_file.write("\n")
-            settings_file.write(tableName)
-            settings_file.close()
+            #settings
+            #open files
+            controller_settings_file = open(path_controller_settings, "w")
+            handler_settings_file = open(path_handler_settings, "w")
+            creator_settings_file = open(path_creator_settings, "w")
+            trsm_settings_file = open(path_trsm_settings, "w")
+
+            #controller settings
+            controller_settings_file.write(str(maxQueueSize))
+            controller_settings_file.write("\n")
+            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + "IO" + str(numIOrequestsPerDataTransfer)) #tableQueueSizeIOperDT
+
+            #Handler settings
+            handler_settings_file.write(str(numIOrequestsPerDataTransfer))
+            handler_settings_file.write("\n")
+            handler_settings_file.write(str(inter_io_processing_time))
+
+            #Creator settings
+            creator_settings_file.write(orig_connection_string)
+            creator_settings_file.write("\n")
+            creator_settings_file.write(orig_username)
+            creator_settings_file.write("\n")
+            creator_settings_file.write(orig_password)
+            creator_settings_file.write("\n")
+            creator_settings_file.write(tableName)
+            creator_settings_file.write("\n")
+            creator_settings_file.write(str(total_items_to_transmit))
+
+            #transmitter
+            trsm_settings_file.write(target_connection_string)
+            trsm_settings_file.write("\n")
+            trsm_settings_file.write(target_username)
+            trsm_settings_file.write("\n")
+            trsm_settings_file.write(target_password)
+            trsm_settings_file.write("\n")
+            trsm_settings_file.write(tableName)
+
+            #close file writers
+            controller_settings_file.close()
+            handler_settings_file.close()
+            creator_settings_file.close()
+            trsm_settings_file.close()
 
             #truncate databases
-            os.system("cd .. \n python py_srv/truncateAll.py")
+            truncator.truncate(target_host, target_database_name, target_username, target_password, tableName)
 
             #run java experiment
             os.system("cd .. \n ./gradlew run")
