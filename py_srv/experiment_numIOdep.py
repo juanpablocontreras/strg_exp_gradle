@@ -16,7 +16,7 @@ path_creator_settings = path_settings + "/creator_settings.txt"
 path_trsm_settings = path_settings + "/trsm_settings.txt"
 
 #ORIGIN database connectivity
-orig_connection_string = "jdbc:mysql://orig-instance.cauebsweajza.us-east-2.rds.amazonaws.com:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
+orig_connection_string = "jdbc:mysql://localhost:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
 orig_username = "juan"
 orig_password = "LapinCoquin13"
 total_items_to_transmit = 1000
@@ -27,12 +27,12 @@ target_connection_string = "jdbc:mysql://target-instance.cauebsweajza.us-east-2.
 target_host = "target-instance.cauebsweajza.us-east-2.rds.amazonaws.com" #used for truncate
 target_database_name = "EXP_TARGET" #used for truncate
 target_username = "juan"
-target_password = "LapinCoquin13"
+target_password = "target_password"
 
 #experiment variable settings
-queueSizes = [20, 60, 100]
-variableIOperDT = [1, 50, 100]
-tables = ["Small100", "Med1000", "Large65535"]
+queueSizes = [2, 3, 4, 6, 7, 8]
+variableIOperDT = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200]
+tables = ["Med1000"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
 
 #build java experiment

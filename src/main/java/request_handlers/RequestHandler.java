@@ -57,24 +57,25 @@ public class RequestHandler extends Thread{
 				//Perform 1 data transfer
 				
 				//create or set up the log files and writers
-				setUpLogPrinters(append_to_file);
-				append_to_file = true; //set to true so that the second+ data transfers print logs appended to the end of the log files
+				//setUpLogPrinters(append_to_file);
+				//append_to_file = true; //set to true so that the second+ data transfers print logs appended to the end of the log files
 				
 				//GET all IO requests for the data transfer into the cached list
 				dataTransferIORequests = getRequestsForTransfer();
 				
 				//log requests time spent in IO queue
-				logQueueTimes(dataTransferIORequests); 
+				//logQueueTimes(dataTransferIORequests); 
 				
 				//Perform the IO requests of the data transfer
 				if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
-					logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
+					//logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
+					performDataTransferIORequests(dataTransferIORequests);
 				}else {
 					//System.out.println("No Requests...");
 					Thread.sleep(pollingTime);
 				}
 				
-				closPrinters();
+				//closPrinters();
 			}
 			
 		}catch(Exception e){
