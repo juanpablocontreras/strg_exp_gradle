@@ -1,5 +1,7 @@
 package request_types;
 
+import global_enums.OperationType;
+
 public class IORequest {
 	
 	public long size;			//size of the data in the io request

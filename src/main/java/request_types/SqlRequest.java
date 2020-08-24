@@ -1,5 +1,7 @@
 package request_types;
 
+import global_enums.OperationType;
+
 public class SqlRequest extends IORequest{
 	
 

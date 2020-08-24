@@ -1,4 +1,4 @@
-package request_types;
+package global_enums;
 
 public enum OperationType {
 	
