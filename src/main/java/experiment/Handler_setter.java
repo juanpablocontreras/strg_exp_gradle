@@ -8,7 +8,7 @@ import global_enums.Handler_Max_Type;
 
 
 public class Handler_setter {
-	public int number_of_IO_requests_per_data_transfer;
+	public int max_type_num;//either num io req per dt or max size before dt
 	public int inter_IO_processing_time;
 	public Handler_Max_Type max_type;
 	
@@ -22,7 +22,7 @@ public class Handler_setter {
 			File settingsFile = new File("exp_settings/handler_settings.txt");
 			Scanner myReader = new Scanner(settingsFile);
 			
-			this.number_of_IO_requests_per_data_transfer = Integer.parseInt(myReader.nextLine());
+			this.max_type_num = Integer.parseInt(myReader.nextLine());
 			this.inter_IO_processing_time = Integer.parseInt(myReader.nextLine());
 			this.max_type = Handler_Max_Type.valueOf(myReader.nextLine());
 			

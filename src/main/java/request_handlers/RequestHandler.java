@@ -1,5 +1,6 @@
 package request_handlers;
 
+import global_enums.Handler_Max_Type;
 import experiment.Handler_setter;
 import request_types.*;
 import request_transmitters.*;
@@ -63,19 +64,33 @@ public class RequestHandler extends Thread{
 				//GET all IO requests for the data transfer into the cached list
 				dataTransferIORequests = getRequestsForTransfer();
 				
-				//log requests time spent in IO queue
-				//logQueueTimes(dataTransferIORequests); 
 				
-				//Perform the IO requests of the data transfer
-				if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
-					//logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
-					performDataTransferIORequests(dataTransferIORequests);
-				}else {
-					//System.out.println("No Requests...");
-					Thread.sleep(pollingTime);
+				/*
+				 * LOG QUEUE TIMES
+				 //logQueueTimes(dataTransferIORequests); 
+				 */
+
+				switch(settings.max_type) {
+					case NUM_IO_REQUESTS: 
+						//Perform the IO requests of the data transfer
+						if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
+							/*
+							 * LOG TRANSMITTER TIMES
+							 //logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
+							 */
+							
+							performDataTransferIORequests(dataTransferIORequests);
+						}else {
+							//System.out.println("No Requests...");
+							Thread.sleep(pollingTime);
+						}
 				}
 				
-				//closPrinters();
+				/*
+				 * PRINTERS FOR QUEUE AND TRANSMITTER LOGS
+				 //closPrinters();
+				 */
+				
 			}
 			
 		}catch(Exception e){
@@ -92,9 +107,10 @@ public class RequestHandler extends Thread{
 		ArrayList<IORequest> dataTransferIORequests = new ArrayList<IORequest>();
 		IORequest tempRequest;
 		
+	
 		//GET all IO requests for the data transfer into the cached list
-		int dataTransSize = this.settings.number_of_IO_requests_per_data_transfer;
-		while(dataTransSize > 0) {
+		int dataTransSize = 0;
+		while(dataTransSize < settings.max_type_num) {
 			
 			//try getting an item from the IO queue
 			tempRequest = this.ioRequestQueue.poll();
@@ -111,13 +127,29 @@ public class RequestHandler extends Thread{
 			}
 			
 			dataTransferIORequests.add(tempRequest); //add request to data transfer cached list
-			dataTransSize--;
 			
+			//increment size in queue 
+			//(either the number of io requests or the size in bytes of the items in the queue)
+			switch(settings.max_type) {
+			case NUM_IO_REQUESTS:
+				dataTransSize++;
+				
+			case SIZE:
+				dataTransSize += tempRequest.size;
+			}
+			
+			
+			//Intra process time
 			Thread.sleep(this.settings.inter_IO_processing_time);
 		}
 		
 		return dataTransferIORequests;
+			
+
+		
+		
 	}
+	
 	
 	private ArrayList<Long> performDataTransferIORequests(ArrayList<IORequest> dataTransferIORequests) throws Exception 
 	{

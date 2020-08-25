@@ -18,22 +18,23 @@ path_trsm_settings = path_settings + "/trsm_settings.txt"
 #ORIGIN database connectivity
 orig_connection_string = "jdbc:mysql://localhost:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
 orig_username = "juan"
-orig_password = "LapinCoquin13"
+orig_password = "Matusalen13"
 total_items_to_transmit = 1000
 
 
 #TARGET database connectivity
-target_connection_string = "jdbc:mysql://target-instance.cauebsweajza.us-east-2.rds.amazonaws.com:3306/EXP_TARGET?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
-target_host = "target-instance.cauebsweajza.us-east-2.rds.amazonaws.com" #used for truncate
+target_connection_string = "jdbc:mysql://localhost:3306/EXP_TARGET?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
+target_host = "localhost" #used for truncate
 target_database_name = "EXP_TARGET" #used for truncate
 target_username = "juan"
-target_password = "target_password"
+target_password = "Matusalen13"
 
 #experiment variable settings
-queueSizes = [2, 3, 4, 6, 7, 8]
-variableIOperDT = [1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200]
-tables = ["Med1000"] #["Small100", "Med1000", "Large65535"]
+queueSizes = [100] #[2, 3, 4, 6, 7, 8]
+sizeof_data_transfer = [100] #[1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200]
+tables = ["Small100"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
+handler_max_type = "NUM_IO_REQUESTS"
 
 #build java experiment
 os.system("cd .. \n ./gradlew clean build")
@@ -48,7 +49,7 @@ for tableName in tables:
 
     for maxQueueSize in queueSizes:
 
-        for numIOrequestsPerDataTransfer in variableIOperDT:
+        for curr_size in sizeof_data_transfer:
 
             #settings
             #open files
@@ -60,12 +61,15 @@ for tableName in tables:
             #controller settings
             controller_settings_file.write(str(maxQueueSize))
             controller_settings_file.write("\n")
-            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + "IO" + str(numIOrequestsPerDataTransfer)) #tableQueueSizeIOperDT
+            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + "IO" + str(curr_size)) #tableQueueSizeIOperDT
 
             #Handler settings
-            handler_settings_file.write(str(numIOrequestsPerDataTransfer))
+            handler_settings_file.write(str(curr_size))
             handler_settings_file.write("\n")
             handler_settings_file.write(str(inter_io_processing_time))
+            handler_settings_file.write("\n")
+            handler_settings_file.write(handler_max_type)
+
 
             #Creator settings
             creator_settings_file.write(orig_connection_string)

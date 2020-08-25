@@ -1,5 +1,5 @@
 jdbc:mysql://localhost:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false
 juan
-LapinCoquin13
-Med1000
+Matusalen13
+Small100
 1000

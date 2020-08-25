@@ -14,9 +14,10 @@ table_name
 total_number_of_items
 
 Handler:
-number of IO requests per data transfer
-inter io processing time
 max type (size or number of IO requests)
+number of IO requests per data transfer/ OR  / SIZE before transfer in bytes
+inter io processing time
+
 
 Transmitter:
 connectionStr
