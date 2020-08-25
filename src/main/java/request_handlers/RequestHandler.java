@@ -70,20 +70,17 @@ public class RequestHandler extends Thread{
 				 //logQueueTimes(dataTransferIORequests); 
 				 */
 
-				switch(settings.max_type) {
-					case NUM_IO_REQUESTS: 
-						//Perform the IO requests of the data transfer
-						if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
-							/*
-							 * LOG TRANSMITTER TIMES
-							 //logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
-							 */
-							
-							performDataTransferIORequests(dataTransferIORequests);
-						}else {
-							//System.out.println("No Requests...");
-							Thread.sleep(pollingTime);
-						}
+				//Perform the IO requests of the data transfer
+				if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
+					/*
+					 * LOG TRANSMITTER TIMES
+					 //logTransmitterTimes(performDataTransferIORequests(dataTransferIORequests));
+					 */
+					
+					performDataTransferIORequests(dataTransferIORequests);
+				}else {
+					//System.out.println("No Requests...");
+					Thread.sleep(pollingTime);
 				}
 				
 				/*
@@ -135,7 +132,9 @@ public class RequestHandler extends Thread{
 				dataTransSize++;
 				
 			case SIZE:
+				System.out.println("tempRequest size: " + tempRequest.size);
 				dataTransSize += tempRequest.size;
+				System.out.println("current dt size: " + dataTransSize);
 			}
 			
 			

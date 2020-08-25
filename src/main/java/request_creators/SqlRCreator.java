@@ -53,12 +53,20 @@ public class SqlRCreator extends Thread {
 				//get row
 				ResultSet rs = stmt.executeQuery("SELECT * FROM " + settings.table_name + " WHERE id=" + i);
 				
+				
+				
 				//process row into an IORequest
 				while(rs.next()) {
+					
+					//GET ID, data, and size
+					int id = rs.getInt(1);
+					String data = rs.getString(2);
+					int data_size = data.length() * 2;
+					
 					String query = str_i;
-					query += rs.getInt(1);
+					query += id;
 					query += ",";
-					query += "\"" + rs.getString(2) + "\"";
+					query += "\"" + data + "\"";
 					query += str_e;
 					
 					//indicate this is the last item to the handler using IORequest isLastItem field
@@ -67,7 +75,7 @@ public class SqlRCreator extends Thread {
 					}
 					
 					SqlRequest request = new SqlRequest(
-							0, 				//size
+							data_size, 				//size
 							rs.getInt(1),
 							query,
 							OperationType.PUT,

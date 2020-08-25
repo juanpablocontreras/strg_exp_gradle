@@ -31,10 +31,10 @@ target_password = "Matusalen13"
 
 #experiment variable settings
 queueSizes = [100] #[2, 3, 4, 6, 7, 8]
-sizeof_data_transfer = [100] #[1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200]
+sizeof_data_transfer = [1000] #[1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200]
 tables = ["Small100"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
-handler_max_type = "NUM_IO_REQUESTS"
+handler_max_type = "SIZE"
 
 #build java experiment
 os.system("cd .. \n ./gradlew clean build")
