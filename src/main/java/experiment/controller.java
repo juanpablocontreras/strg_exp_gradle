@@ -42,13 +42,6 @@ public class controller {
 			endTime = System.currentTimeMillis();
 			total_time = endTime - startTime;
 			
-			//write time to file
-			FileWriter write = new FileWriter(logFolderPath + "/total_time" + setting.logIdentifier,false);
-			PrintWriter pw = new PrintWriter(write);
-			pw.print(total_time);
-			pw.close();
-			write.close();
-			
 			System.out.println("total execution time for " + setting.logIdentifier + ": " + total_time);
 			
 		} catch (Exception e) {

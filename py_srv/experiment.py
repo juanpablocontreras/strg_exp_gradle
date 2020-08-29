@@ -19,7 +19,7 @@ path_trsm_settings = path_settings + "/trsm_settings.txt"
 orig_connection_string = "jdbc:mysql://localhost:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
 orig_username = "juan"
 orig_password = "Matusalen13"
-total_items_to_transmit = 1000
+total_items_to_transmit = 500
 
 
 #TARGET database connectivity
@@ -31,8 +31,8 @@ target_password = "Matusalen13"
 
 #experiment variable settings
 queueSizes = [100] #[2, 3, 4, 6, 7, 8]
-sizeof_data_transfer = [1000] #[1, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 90, 100, 150, 200]
-tables = ["Small100"] #["Small100", "Med1000", "Large65535"]
+sizeof_data_transfer = [1000] #list(range(5000,70000,5000)) #[1000]
+tables = ["Large65535"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
 handler_max_type = "SIZE"
 

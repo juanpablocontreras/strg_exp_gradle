@@ -24,6 +24,8 @@ public class RequestHandler extends Thread{
 	protected PrintWriter printQueueLog_line;
 	protected PrintWriter printTrsmLog_line;
 	
+	protected int transfer_size = 0; //total transfer size, total bytes for SIZE, total number of IO requests for num_io_requests
+	
 	public RequestHandler(	
 			SyncListIOQueue requestQeue,
 			Transmitter transmitter,
@@ -54,6 +56,8 @@ public class RequestHandler extends Thread{
 			//set up first append_to_file to false so previous files are erased
 			boolean append_to_file = false;
 			
+			long start_time = System.currentTimeMillis();
+			
 			while(!wasLastItemProcessed) {
 				//Perform 1 data transfer
 				
@@ -69,7 +73,9 @@ public class RequestHandler extends Thread{
 				 * LOG QUEUE TIMES
 				 //logQueueTimes(dataTransferIORequests); 
 				 */
-
+				
+				
+				
 				//Perform the IO requests of the data transfer
 				if(dataTransferIORequests != null && !dataTransferIORequests.isEmpty()) {
 					/*
@@ -83,11 +89,36 @@ public class RequestHandler extends Thread{
 					Thread.sleep(pollingTime);
 				}
 				
+				
 				/*
 				 * PRINTERS FOR QUEUE AND TRANSMITTER LOGS
 				 //closPrinters();
 				 */
 				
+			}
+			
+			long total_time = System.currentTimeMillis() - start_time;
+			
+			//Print Experiment results
+			switch(settings.max_type) {
+			case NUM_IO_REQUESTS:
+				FileWriter write = new FileWriter(logFolderPath + "/total_time" + this.logIdentifier,false);
+				PrintWriter pw = new PrintWriter(write);
+				pw.print(total_time);
+				pw.close();
+				write.close();
+				break;
+				
+			case SIZE:
+				FileWriter write_s = new FileWriter(logFolderPath + "/transfer_speed" + this.logIdentifier,false);
+				PrintWriter pw_s = new PrintWriter(write_s);
+				
+				double transmission_speed = new Double(transfer_size) / new Double(total_time);
+				
+				pw_s.print(transmission_speed);
+				pw_s.close();
+				write_s.close();
+				break;
 			}
 			
 		}catch(Exception e){
@@ -132,9 +163,9 @@ public class RequestHandler extends Thread{
 				dataTransSize++;
 				
 			case SIZE:
-				System.out.println("tempRequest size: " + tempRequest.size);
+				//System.out.println("tempRequest size: " + tempRequest.size);
 				dataTransSize += tempRequest.size;
-				System.out.println("current dt size: " + dataTransSize);
+				//System.out.println("current dt size: " + dataTransSize);
 			}
 			
 			
@@ -142,11 +173,8 @@ public class RequestHandler extends Thread{
 			Thread.sleep(this.settings.inter_IO_processing_time);
 		}
 		
+		transfer_size += dataTransSize; //update the total transfer size
 		return dataTransferIORequests;
-			
-
-		
-		
 	}
 	
 	
