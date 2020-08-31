@@ -8,8 +8,8 @@ letter = "a"
 
 cnx_orig = mysql.connector.connect(
                                user='juan',
-							   password='',
-							   host='orig-instance.cauebsweajza.us-east-2.rds.amazonaws.com',
+							   password='Matusalen13',
+							   host='localhost',
 							   database='EXP_ORIG')
 
 

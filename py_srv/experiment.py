@@ -19,7 +19,7 @@ path_trsm_settings = path_settings + "/trsm_settings.txt"
 orig_connection_string = "jdbc:mysql://localhost:3306/EXP_ORIG?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false"
 orig_username = "juan"
 orig_password = "Matusalen13"
-total_items_to_transmit = 500
+total_items_to_transmit = 1000
 
 
 #TARGET database connectivity
@@ -31,10 +31,11 @@ target_password = "Matusalen13"
 
 #experiment variable settings
 queueSizes = [100] #[2, 3, 4, 6, 7, 8]
-sizeof_data_transfer = [1000] #list(range(5000,70000,5000)) #[1000]
+sizeof_data_transfer = [100000] #list(range(5000,67000,500)) #[1000]
 tables = ["Large65535"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
 handler_max_type = "SIZE"
+outcome_type = "SPEED"
 
 #build java experiment
 os.system("cd .. \n ./gradlew clean build")
@@ -61,7 +62,14 @@ for tableName in tables:
             #controller settings
             controller_settings_file.write(str(maxQueueSize))
             controller_settings_file.write("\n")
-            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + "IO" + str(curr_size)) #tableQueueSizeIOperDT
+
+            size_io_identifier = ""
+            if handler_max_type == "SIZE":
+                size_io_identifier = "S"
+            elif handler_max_type == "NUM_IO_REQUESTS":
+                size_io_identifier = "IO"
+
+            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + size_io_identifier + str(curr_size)) #tableQueueSizeIOperDT
 
             #Handler settings
             handler_settings_file.write(str(curr_size))
@@ -69,7 +77,8 @@ for tableName in tables:
             handler_settings_file.write(str(inter_io_processing_time))
             handler_settings_file.write("\n")
             handler_settings_file.write(handler_max_type)
-
+            handler_settings_file.write("\n")
+            handler_settings_file.write(outcome_type)
 
             #Creator settings
             creator_settings_file.write(orig_connection_string)

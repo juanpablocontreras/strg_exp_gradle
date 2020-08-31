@@ -100,17 +100,9 @@ public class RequestHandler extends Thread{
 			long total_time = System.currentTimeMillis() - start_time;
 			
 			//Print Experiment results
-			switch(settings.max_type) {
-			case NUM_IO_REQUESTS:
-				FileWriter write = new FileWriter(logFolderPath + "/total_time" + this.logIdentifier,false);
-				PrintWriter pw = new PrintWriter(write);
-				pw.print(total_time);
-				pw.close();
-				write.close();
-				break;
-				
-			case SIZE:
-				FileWriter write_s = new FileWriter(logFolderPath + "/transfer_speed" + this.logIdentifier,false);
+			switch(settings.outcome_type) {
+			case SPEED:
+				FileWriter write_s = new FileWriter(logFolderPath + "/speed_" + this.logIdentifier,false);
 				PrintWriter pw_s = new PrintWriter(write_s);
 				
 				double transmission_speed = new Double(transfer_size) / new Double(total_time);
@@ -119,7 +111,16 @@ public class RequestHandler extends Thread{
 				pw_s.close();
 				write_s.close();
 				break;
+				
+			case TOTAL_TIME:
+				FileWriter write = new FileWriter(logFolderPath + "/total_time_" + this.logIdentifier,false);
+				PrintWriter pw = new PrintWriter(write);
+				pw.print(total_time);
+				pw.close();
+				write.close();
+				break;
 			}
+			
 			
 		}catch(Exception e){
 			System.out.println("Handler error: ");
@@ -138,7 +139,8 @@ public class RequestHandler extends Thread{
 	
 		//GET all IO requests for the data transfer into the cached list
 		int dataTransSize = 0;
-		while(dataTransSize < settings.max_type_num) {
+		int numRequests = 0;
+		while(!isTransferReady(dataTransSize, numRequests)) {
 			
 			//try getting an item from the IO queue
 			tempRequest = this.ioRequestQueue.poll();
@@ -156,18 +158,8 @@ public class RequestHandler extends Thread{
 			
 			dataTransferIORequests.add(tempRequest); //add request to data transfer cached list
 			
-			//increment size in queue 
-			//(either the number of io requests or the size in bytes of the items in the queue)
-			switch(settings.max_type) {
-			case NUM_IO_REQUESTS:
-				dataTransSize++;
-				
-			case SIZE:
-				//System.out.println("tempRequest size: " + tempRequest.size);
-				dataTransSize += tempRequest.size;
-				//System.out.println("current dt size: " + dataTransSize);
-			}
-			
+			numRequests++;
+			dataTransSize += tempRequest.size;
 			
 			//Intra process time
 			Thread.sleep(this.settings.inter_IO_processing_time);
@@ -177,6 +169,22 @@ public class RequestHandler extends Thread{
 		return dataTransferIORequests;
 	}
 	
+	private boolean isTransferReady(int size, int numRequests) {
+		switch(settings.max_type) {
+		case NUM_IO_REQUESTS:
+			if(numRequests < settings.max_type_num)
+				return false;
+			
+			return true;
+			
+		case SIZE:
+			if(size < settings.max_type_num)
+				return false;
+			
+			return true;
+		}
+		return true;
+	}
 	
 	private ArrayList<Long> performDataTransferIORequests(ArrayList<IORequest> dataTransferIORequests) throws Exception 
 	{
