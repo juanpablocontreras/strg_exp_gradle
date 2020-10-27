@@ -31,10 +31,10 @@ target_password = "Matusalen13"
 
 #experiment variable settings
 queueSizes = [100] #[2, 3, 4, 6, 7, 8]
-sizeof_data_transfer = [100000] #list(range(5000,67000,500)) #[1000]
+sizeof_data_transfer = list(range(1,50,1)) + list(range(50,100,10)) + list(range(150,1000,50))
 tables = ["Large65535"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
-handler_max_type = "SIZE"
+handler_max_type = "NUM_IO_REQUESTS"
 outcome_type = "SPEED"
 
 #build java experiment

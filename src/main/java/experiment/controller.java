@@ -31,7 +31,23 @@ public class controller {
 			
 			SqlRCreator creator = new SqlRCreator(ioqueue);
 			Transmitter sqlTransmitter = new SqlRequestTransmitter();
-			RequestHandler handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
+			
+			Thread handler;
+			switch(setting.scenario) {
+			case 1:
+				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
+				break;
+			case 2:
+				handler = new PeriodicRequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
+				break;
+			case 3:
+				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
+				break;
+				
+			default:
+				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);	
+			}
+			
 			
 			startTime = System.currentTimeMillis();
 			
