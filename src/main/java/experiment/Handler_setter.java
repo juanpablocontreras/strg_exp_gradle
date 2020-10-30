@@ -8,7 +8,7 @@ import global_enums.*;
 
 
 public class Handler_setter {
-	public int max_type_num;//either num io req per dt or max size before dt
+	public long max_type_num;//either num io req per dt or max size before dt
 	public int inter_IO_processing_time;
 	public Handler_Max_Type max_type;
 	public Outcome_Type outcome_type;

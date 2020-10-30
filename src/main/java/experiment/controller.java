@@ -35,16 +35,20 @@ public class controller {
 			Thread handler;
 			switch(setting.scenario) {
 			case 1:
+				System.out.println("Scenario One is chosen");
 				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
 				break;
 			case 2:
+				System.out.println("Scenario 2 is chosen");
 				handler = new PeriodicRequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
 				break;
 			case 3:
+				System.out.println("Scenario 3 is chosen");
 				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
 				break;
 				
 			default:
+				System.out.println("Scenario default is chosen");
 				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);	
 			}
 			
