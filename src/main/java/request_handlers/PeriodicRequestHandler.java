@@ -66,7 +66,7 @@ public class PeriodicRequestHandler extends Thread{
 				//each iteration does one data transfer
 				//System.out.println("starting new data transfer");
 				
-				dataTransferIORequests = new ArrayList<IORequest>();
+				dataTransferIORequests = new ArrayList<IORequest>(); //internal list to keep the batch's IO requests
 				
 				
 				//get data to be sent
@@ -106,12 +106,13 @@ public class PeriodicRequestHandler extends Thread{
 					
 					//add request to data transfer batch
 					dataTransferIORequests.add(tempRequest);
+					
 				}
 				
 				//execute requests using transmitter
 				transmit(dataTransferIORequests, dt_start, System.currentTimeMillis());
 				
-				//System.out.println("data transfer happened");
+				//System.out.println("data transfer finished...");
 			}
 			
 		}catch(Exception e) {

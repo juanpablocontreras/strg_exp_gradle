@@ -2,7 +2,7 @@ import mysql.connector
 
 #SETTINGS FOR POPULATE
 num_items = 1000
-num_letters = 2139
+num_letters = 100 #2139
 letter = "a"
 
 

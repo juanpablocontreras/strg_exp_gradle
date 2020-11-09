@@ -32,7 +32,9 @@ public class controller {
 			SqlRCreator creator = new SqlRCreator(ioqueue);
 			Transmitter sqlTransmitter = new SqlRequestTransmitter();
 			
-			Thread handler;
+			Thread handler = new ParentRequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
+			
+			/*
 			switch(setting.scenario) {
 			case 1:
 				System.out.println("Scenario One is chosen");
@@ -51,7 +53,7 @@ public class controller {
 				System.out.println("Scenario default is chosen");
 				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);	
 			}
-			
+			*/
 			
 			startTime = System.currentTimeMillis();
 			

@@ -31,7 +31,7 @@ target_password = "root_password"
 
 #experiment variable settings
 queueSizes = [100] #[2, 3, 4, 6, 7, 8]
-periods = []
+periods = list(range(50,1100, 50))
 tables = ["Large65535"] #["Small100", "Med1000", "Large65535"]
 inter_io_processing_time = 10
 handler_max_type = "PERIOD"
@@ -57,12 +57,12 @@ for tableName in tables:
             # controller settings
             controller_settings_file.write(str(maxQueueSize))
             controller_settings_file.write("\n")
-            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + "P" + + str(period))
+            controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + "P" + str(period))
             controller_settings_file.write("\n")
             controller_settings_file.write(str(2))
 
             # Handler settings
-            handler_settings_file.write(str(curr_size))
+            handler_settings_file.write(str(period))
             handler_settings_file.write("\n")
             handler_settings_file.write(str(inter_io_processing_time))
             handler_settings_file.write("\n")

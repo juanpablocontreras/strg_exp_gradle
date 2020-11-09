@@ -15,9 +15,10 @@ table_name
 total_number_of_items
 
 Handler:
-max type (size or number of IO requests)
-number of IO requests per data transfer/ OR  / SIZE before transfer in bytes / OR / Fixed Period
+max type num: number of IO requests per data transfer/ OR  / SIZE before transfer in bytes / OR / Fixed Period
 inter io processing time
+Max type: ENUM (SIZE, NUM_IO_REQUESTS, PERIOD)
+Outcome Type: enum (SPEED, TOTAL_TIME)
 
 
 Transmitter:
