@@ -2,6 +2,7 @@ package request_transmitters;
 
 import java.sql.*;
 import request_types.*;
+import experiment.Batch_metrics;
 import experiment.Transmitter_setter;
 
 public class SqlRequestTransmitter extends Transmitter{
@@ -11,35 +12,45 @@ public class SqlRequestTransmitter extends Transmitter{
 	
 
 	@Override
-	public void setUpConnection() throws Exception {
+	public void setUpConnection(Batch_metrics batch_metrics) throws Exception {
 		
 		//get settings
 		Transmitter_setter settings = new Transmitter_setter();
 		
 		//db driver registration
-		Class.forName("com.mysql.jdbc.Driver"); 
+		Class.forName("com.mysql.jdbc.Driver");
+		
+		long start_t = System.nanoTime();
 
 		//connection
 		Connection sqlcon = DriverManager.getConnection(settings.connectionStr, settings.username, settings.password);
-				//"jdbc:mysql://target-instance.cauebsweajza.us-east-2.rds.amazonaws.com" + 
-				//":3306/" + 
-				//params[0] +
-				//"?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false",
-				//params[1],
-				//params[2]
-				//		); 
+		
+		long end_t = System.nanoTime();
 		this.sqlcon = sqlcon;
 		
+		//add metrics measurements
+		batch_metrics.create_connection_time = end_t - start_t;
+		
 	}
+	
 
 
 	@Override
-	public void performIORequest(IORequest request) throws Exception {
+	public void executeRequest(IORequest request, Batch_metrics batch_metrics) throws Exception {
 		
 		//System.out.println("performing the IO request: " + request.id);
 		//System.out.println("Query: " + request.operation);
 		
+		long start_t;
+		long end_t;
+		
+		start_t = System.nanoTime();
 		Statement stmt = this.sqlcon.createStatement(); 
+		end_t = System.nanoTime();
+		
+		batch_metrics.create_statement_times.add(end_t - start_t);
+		
+		start_t = System.nanoTime();
 		
 		switch(request.optype) {
 		case GET:
@@ -55,14 +66,21 @@ public class SqlRequestTransmitter extends Transmitter{
 			stmt.executeQuery(request.operation);
 			break;
 		}
+		
+		end_t = System.nanoTime();
+		
+		batch_metrics.exec_times.add(end_t - start_t);
 	}
 
 
 	@Override
-	public void closeConnection() throws Exception {
+	public void closeConnection(Batch_metrics batch_metrics) throws Exception {
 		
+		long start_t = System.nanoTime();
 		this.sqlcon.close();
-		//System.out.println("closing transmitter connection");
+		long end_t = System.nanoTime();
+		
+		batch_metrics.close_connection_time = end_t - start_t;
 	}
 	
 }

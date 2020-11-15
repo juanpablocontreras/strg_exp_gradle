@@ -1,13 +1,15 @@
 package request_transmitters;
 
 import request_types.IORequest;
+import experiment.Batch_metrics;
 
-public abstract class Transmitter {
+public  abstract class Transmitter {
 	
-	public abstract void setUpConnection() throws Exception;
 	
-	public abstract void performIORequest(IORequest request) throws Exception;
+	public abstract void setUpConnection(Batch_metrics batch_metrics) throws Exception;
 	
-	public abstract void closeConnection() throws Exception;
+	public abstract void executeRequest(IORequest request, Batch_metrics batch_metrics) throws Exception;
+	
+	public abstract void closeConnection(Batch_metrics batch_metrics) throws Exception;
 	
 }

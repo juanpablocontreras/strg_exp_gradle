@@ -10,6 +10,7 @@ import experiment.Handler_setter;
 import ioQueues.SyncListIOQueue;
 import request_transmitters.Transmitter;
 import request_types.IORequest;
+import experiment.Batch_metrics;
 
 public class ParentRequestHandler extends Thread{
 	
@@ -67,6 +68,7 @@ public class ParentRequestHandler extends Thread{
 			this.settings = new Handler_setter();
 			this.settings.getSettings();
 			
+			
 			while(!wasLastItemProcessed) {
 				//each iteration builds a batch
 				
@@ -76,11 +78,11 @@ public class ParentRequestHandler extends Thread{
 				ArrayList<IORequest> dataTransferIORequests = new ArrayList<IORequest>(); 
 				
 				//set up initial batch properties
-				Metrics metrics = new Metrics(0,0,System.nanoTime()); 
+				Batch_metrics batch_metrics = new Batch_metrics(batch_number, System.nanoTime()); 
 				
 				//get data to be sent
 				IORequest tempRequest;
-				while(!is_batch_ready(this.settings, metrics)) {
+				while(!is_batch_ready(this.settings, batch_metrics)) {
 					//get an IO request from the IO request queue into the batch 's internal list of IO requests
 					
 					//try getting an item from the IO queue
@@ -94,10 +96,10 @@ public class ParentRequestHandler extends Thread{
 							if(attempt-- <= 0) {
 								//all attempts were made to get the item from queue
 								//send batch with as many requests as it already has 
-								if(metrics.num_io_requests_in_batch > 0) {
+								if(batch_metrics.num_io_requests_in_batch > 0) {
 									//send request
 									//write measurements of speed to the logs file
-									send_data_transfer(dataTransferIORequests, metrics);
+									send_data_transfer(dataTransferIORequests, batch_metrics);
 								}
 								
 								System.out.println("All attemps done...");
@@ -114,17 +116,19 @@ public class ParentRequestHandler extends Thread{
 					dataTransferIORequests.add(tempRequest);
 					
 					//update batch properties
-					metrics.num_io_requests_in_batch++;
-					metrics.batch_size_in_bytes += tempRequest.size;
+					batch_metrics.num_io_requests_in_batch++;
+					batch_metrics.batch_size_in_bytes += tempRequest.size;
 				}
 				
-				metrics.data_stransfer_end_time = System.nanoTime();
 				
 				//execute requests using transmitter
-				send_data_transfer(dataTransferIORequests, metrics);
+				send_data_transfer(dataTransferIORequests, batch_metrics);
+				
+				//stamp batch completion time
+				batch_metrics.batch_completion_time = System.nanoTime();
 				
 				//write metrics to the logs
-				output_metrics(metrics);
+				output_metrics(batch_metrics);
 				
 				//update batch number
 				batch_number++;
@@ -147,22 +151,22 @@ public class ParentRequestHandler extends Thread{
 	 * @param building_batch_start_time
 	 * @return
 	 */
-	boolean is_batch_ready(Handler_setter settings, Metrics metrics) {
+	boolean is_batch_ready(Handler_setter settings, Batch_metrics batch_metrics) {
 		
 		switch(settings.max_type) {
 		
 		case SIZE:
-			if(metrics.batch_size_in_bytes < settings.max_type_num)
+			if(batch_metrics.batch_size_in_bytes < settings.max_type_num)
 				return false;
 			return true;
 			
 		case NUM_IO_REQUESTS:
-			if(metrics.num_io_requests_in_batch < settings.max_type_num)
+			if(batch_metrics.num_io_requests_in_batch < settings.max_type_num)
 				return false;
 			return true;
 			
 		case PERIOD:
-			if((System.nanoTime() - metrics.data_trasnfer_start_time) < settings.max_type_num)
+			if((System.nanoTime() - batch_metrics.batch_creation_time) < settings.max_type_num)
 				return false;
 			return true;
 		}
@@ -171,22 +175,15 @@ public class ParentRequestHandler extends Thread{
 	}
 	
 	
-	private void send_data_transfer(ArrayList<IORequest> requests, Metrics metrics) throws Exception {
+	private void send_data_transfer(ArrayList<IORequest> requests, Batch_metrics batch_metrics) throws Exception {
 		//transmits requests and returns number of bytes transmitted
 		
-		long start;
-		long end;
-		
 		//set up connection
-		start = System.nanoTime();
-		this.transmitter.setUpConnection();
-		end = System.nanoTime();
+		this.transmitter.setUpConnection(batch_metrics);
 		
-		metrics.create_connection_times.add(end-start); //log time for connection
-		
-		//process requests
+		//execute requests
 		for(IORequest request:requests) {
-			transmitter.performIORequest(request);
+			transmitter.executeRequest(request, batch_metrics);
 			
 			//check if last item was processed
 			if(request.isLastItem) {
@@ -195,23 +192,18 @@ public class ParentRequestHandler extends Thread{
 			}
 		}
 		
-		//close connection
-		start = System.nanoTime();
-		transmitter.closeConnection();
-		end = System.nanoTime();
-		
-		metrics.close_connection_times.add(end-start);
+		transmitter.closeConnection(batch_metrics);
 	}
 	
 	
-	private void output_metrics(Metrics metrics) throws IOException {
+	private void output_metrics(Batch_metrics batch_metrics) throws IOException {
 		
 		
 		if(this.output_batch_size) {
 			FileWriter write = new FileWriter(this.logFolderPath + "/byte_size_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
-			pwriter.println(metrics.batch_size_in_bytes);
+			pwriter.println(batch_metrics.batch_size_in_bytes);
 			
 			pwriter.close();
 			write.close();
@@ -222,7 +214,7 @@ public class ParentRequestHandler extends Thread{
 			FileWriter write = new FileWriter(this.logFolderPath + "/batch_speed_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
-			double speed = (metrics.data_stransfer_end_time - metrics.data_trasnfer_start_time)/metrics.batch_size_in_bytes;
+			double speed = (double)(batch_metrics.batch_completion_time - batch_metrics.batch_creation_time)/(double)batch_metrics.batch_size_in_bytes;
 			pwriter.println(speed);
 			
 			pwriter.close();
@@ -234,9 +226,7 @@ public class ParentRequestHandler extends Thread{
 			FileWriter write = new FileWriter(this.logFolderPath + "/close_con" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
-			for(Long time:metrics.close_connection_times) {
-				pwriter.println(time);
-			}
+			pwriter.println(batch_metrics.close_connection_time);
 			
 			pwriter.close();
 			write.close();
@@ -247,9 +237,7 @@ public class ParentRequestHandler extends Thread{
 			FileWriter write = new FileWriter(this.logFolderPath + "/create_con" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
-			for(Long time:metrics.create_connection_times) {
-				pwriter.println(time);
-			}
+			pwriter.println(batch_metrics.create_connection_time);
 			
 			pwriter.close();
 			write.close();
@@ -260,7 +248,7 @@ public class ParentRequestHandler extends Thread{
 			FileWriter write = new FileWriter(this.logFolderPath + "/exec_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
-			for(Long time:metrics.exec_times) {
+			for(Long time:batch_metrics.exec_times) {
 				pwriter.println(time);
 			}
 			
@@ -272,7 +260,7 @@ public class ParentRequestHandler extends Thread{
 			FileWriter write = new FileWriter(this.logFolderPath + "/queue_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
-			for(Long time:metrics.io_queue_times) {
+			for(Long time:batch_metrics.io_queue_times) {
 				pwriter.println(time);
 			}
 			
@@ -288,31 +276,3 @@ public class ParentRequestHandler extends Thread{
 	
 }
 
-
-final class Metrics{
-	public long batch_size_in_bytes;
-	public int num_io_requests_in_batch;
-	public long data_trasnfer_start_time;
-	public long data_stransfer_end_time;
-	public ArrayList<Long> create_connection_times;
-	public ArrayList<Long> close_connection_times;
-	public ArrayList<Long> exec_times;
-	public ArrayList<Long> io_queue_times;
-	
-	public Metrics(
-			long batch_size_in_bytes,
-			int num_io_requests_in_batch,
-			long data_trasnfer_start_time) {
-		
-		this.data_trasnfer_start_time = data_trasnfer_start_time;
-		this.data_stransfer_end_time = 0;
-		
-		this.batch_size_in_bytes = batch_size_in_bytes;
-		this.num_io_requests_in_batch = num_io_requests_in_batch;
-		
-		create_connection_times = new ArrayList<Long>();
-		close_connection_times = new ArrayList<Long>();
-		exec_times = new ArrayList<Long>();
-		io_queue_times = new ArrayList<Long>();
-	}
-}
