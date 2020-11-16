@@ -31,10 +31,11 @@ public class ParentRequestHandler extends Thread{
 	
 	
 	//Fields that should be in the settings:
-	protected boolean output_batch_speed = false;
+	protected boolean output_batch_speed = true;
 	protected boolean output_batch_size = false;
-	protected boolean output_connection_creation_times = true;
-	protected boolean output_close_connection_times = true;
+	protected boolean output_connection_creation_times = false;
+	protected boolean output_close_connection_times = false;
+	protected boolean output_create_stmt_times = false;
 	protected boolean output_exec_times = false;
 	protected boolean output_io_queue_times_w = false;
 	protected int pollingTime = 100; //amount of time between unsuccessful polls
@@ -223,7 +224,7 @@ public class ParentRequestHandler extends Thread{
 		
 		
 		if(this.output_close_connection_times) {
-			FileWriter write = new FileWriter(this.logFolderPath + "/close_con" + this.logIdentifier, this.append_to_file);
+			FileWriter write = new FileWriter(this.logFolderPath + "/close_con_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
 			pwriter.println(batch_metrics.close_connection_time);
@@ -234,10 +235,22 @@ public class ParentRequestHandler extends Thread{
 		
 		
 		if(this.output_connection_creation_times) {
-			FileWriter write = new FileWriter(this.logFolderPath + "/create_con" + this.logIdentifier, this.append_to_file);
+			FileWriter write = new FileWriter(this.logFolderPath + "/create_con_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
 			pwriter.println(batch_metrics.create_connection_time);
+			
+			pwriter.close();
+			write.close();
+		}
+		
+		if(this.output_create_stmt_times) {
+			FileWriter write = new FileWriter(this.logFolderPath + "/exec_" + this.logIdentifier, this.append_to_file);
+			PrintWriter pwriter = new PrintWriter(write);
+			
+			for(Long time:batch_metrics.create_statement_times) {
+				pwriter.println(time);
+			}
 			
 			pwriter.close();
 			write.close();

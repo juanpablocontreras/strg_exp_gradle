@@ -7,7 +7,6 @@ import java.util.Scanner;
 public class Controller_setter {
 	public int maxQueueSize;
 	public String logIdentifier;
-	public int scenario;
 	
 	
 	public Controller_setter() {
@@ -21,7 +20,6 @@ public class Controller_setter {
 			
 			this.maxQueueSize = Integer.parseInt(myReader.nextLine());
 			this.logIdentifier = myReader.nextLine();
-			this.scenario = Integer.parseInt(myReader.nextLine());
 			
 			myReader.close();
 			

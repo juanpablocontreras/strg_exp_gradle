@@ -72,13 +72,13 @@ for tableName in tables:
             controller_settings_file.write(tableName + "Q" + str(maxQueueSize) + size_io_identifier + str(curr_size)) #tableQueueSizeIOperDT
 
             #Handler settings
-            handler_settings_file.write(str(curr_size))
+            handler_settings_file.write(str(curr_size)) #size of data transfer (max num)
             handler_settings_file.write("\n")
-            handler_settings_file.write(str(inter_io_processing_time))
+            handler_settings_file.write(str(inter_io_processing_time)) #inter io processing time
             handler_settings_file.write("\n")
-            handler_settings_file.write(handler_max_type)
+            handler_settings_file.write(handler_max_type) #max num type
             handler_settings_file.write("\n")
-            handler_settings_file.write(outcome_type)
+            handler_settings_file.write(outcome_type) #outcome type
 
             #Creator settings
             creator_settings_file.write(orig_connection_string)
