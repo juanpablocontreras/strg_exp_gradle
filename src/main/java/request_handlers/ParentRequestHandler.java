@@ -108,6 +108,24 @@ public class ParentRequestHandler extends Thread{
 								return;
 							}
 							
+							//Process the item from the queue
+							long start_process = System.currentTimeMillis();
+							long temp_i = 0;
+							while((System.currentTimeMillis() - start_process) < settings.inter_IO_processing_time 
+									&& temp_i < 10 //added so processor runs commands
+									) {
+								
+								//simulate processing the request
+								temp_i++;
+								temp_i--;
+								temp_i++;
+								temp_i--;
+								temp_i++;
+								temp_i--;
+								temp_i++;
+								temp_i--;
+							}
+							
 							//try polling again
 							tempRequest = this.ioRequestQueue.poll();
 						}
