@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import control_setters.Controller_setter;
-
+import global_enums.Creator_Distribution;
 
 public class controller {
 	
@@ -36,30 +36,14 @@ public class controller {
 			
 			Thread handler = new ParentRequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
 			
-			/*
-			switch(setting.scenario) {
-			case 1:
-				System.out.println("Scenario One is chosen");
-				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
-				break;
-			case 2:
-				System.out.println("Scenario 2 is chosen");
-				handler = new PeriodicRequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
-				break;
-			case 3:
-				System.out.println("Scenario 3 is chosen");
-				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);
-				break;
-				
-			default:
-				System.out.println("Scenario default is chosen");
-				handler = new RequestHandler(ioqueue, sqlTransmitter, setting.logIdentifier);	
-			}
-			*/
-			
 			startTime = System.currentTimeMillis();
 			
 			creator.start();
+			if(setting.creator_distribution.equals(Creator_Distribution.NONE)) {
+				//wait for creator to finish putting all requests in queue
+				creator.join();
+			}
+			
 			handler.start();
 			
 			handler.join();

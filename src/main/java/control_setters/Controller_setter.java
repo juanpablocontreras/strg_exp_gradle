@@ -3,10 +3,12 @@ package control_setters;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import global_enums.Creator_Distribution;;
 
 public class Controller_setter {
 	public int maxQueueSize;
 	public String logIdentifier;
+	public Creator_Distribution creator_distribution;
 	
 	
 	public Controller_setter() {
@@ -20,6 +22,7 @@ public class Controller_setter {
 			
 			this.maxQueueSize = Integer.parseInt(myReader.nextLine());
 			this.logIdentifier = myReader.nextLine();
+			this.creator_distribution = Creator_Distribution.valueOf(myReader.nextLine());
 			
 			myReader.close();
 			

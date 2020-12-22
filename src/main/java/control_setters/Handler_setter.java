@@ -11,7 +11,7 @@ public class Handler_setter {
 	public long max_type_num;//either num io req per dt or max size before dt
 	public int inter_IO_processing_time;
 	public Handler_Max_Type max_type;
-	public Outcome_Type outcome_type;
+	
 	
 	
 	public Handler_setter() {
@@ -26,7 +26,6 @@ public class Handler_setter {
 			this.max_type_num = Integer.parseInt(myReader.nextLine());
 			this.inter_IO_processing_time = Integer.parseInt(myReader.nextLine());
 			this.max_type = Handler_Max_Type.valueOf(myReader.nextLine());
-			this.outcome_type = Outcome_Type.valueOf(myReader.nextLine());
 			
 			myReader.close();
 			

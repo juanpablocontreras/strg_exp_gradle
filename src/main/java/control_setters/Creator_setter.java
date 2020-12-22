@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import global_enums.Creator_Distribution;
+
 
 public class Creator_setter {
 	public String connectionStr;
@@ -11,6 +13,7 @@ public class Creator_setter {
 	public String password;
 	public String table_name;
 	public int total_number_of_items;
+	public Creator_Distribution distribution;
 	
 	
 	public Creator_setter() {
@@ -27,6 +30,7 @@ public class Creator_setter {
 			this.password = myReader.nextLine();
 			this.table_name = myReader.nextLine();
 			this.total_number_of_items = Integer.parseInt(myReader.nextLine());
+			this.distribution = Creator_Distribution.valueOf(myReader.nextLine());
 			
 			myReader.close();
 			
