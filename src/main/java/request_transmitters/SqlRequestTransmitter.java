@@ -1,9 +1,10 @@
 package request_transmitters;
 
 import java.sql.*;
+
+import control_setters.Transmitter_setter;
 import request_types.*;
 import experiment.Batch_metrics;
-import experiment.Transmitter_setter;
 
 public class SqlRequestTransmitter extends Transmitter{
 	

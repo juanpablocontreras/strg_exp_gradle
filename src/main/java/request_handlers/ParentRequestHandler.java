@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import experiment.Handler_setter;
+import control_setters.Handler_setter;
 import ioQueues.SyncListIOQueue;
 import request_transmitters.Transmitter;
 import request_types.IORequest;
@@ -33,10 +33,10 @@ public class ParentRequestHandler extends Thread{
 	//Fields that should be in the settings:
 	protected boolean output_batch_speed = true;
 	protected boolean output_batch_size = false;
-	protected boolean output_connection_creation_times = false;
-	protected boolean output_close_connection_times = false;
-	protected boolean output_create_stmt_times = false;
-	protected boolean output_exec_times = false;
+	protected boolean output_connection_creation_times = true;
+	protected boolean output_close_connection_times = true;
+	protected boolean output_create_stmt_times = true;
+	protected boolean output_exec_times = true;
 	protected boolean output_io_queue_times_w = false;
 	protected int pollingTime = 100; //amount of time between unsuccessful polls
 	protected int numAttempts = 10; //number of attempts to get item from queue before proceeding to the data transfer anyway
@@ -245,7 +245,7 @@ public class ParentRequestHandler extends Thread{
 		}
 		
 		if(this.output_create_stmt_times) {
-			FileWriter write = new FileWriter(this.logFolderPath + "/exec_" + this.logIdentifier, this.append_to_file);
+			FileWriter write = new FileWriter(this.logFolderPath + "/create_stmt_" + this.logIdentifier, this.append_to_file);
 			PrintWriter pwriter = new PrintWriter(write);
 			
 			for(Long time:batch_metrics.create_statement_times) {

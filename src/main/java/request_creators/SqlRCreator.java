@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import control_setters.Creator_setter;
 import request_types.SqlRequest;
 import ioQueues.*;
-import experiment.Creator_setter;
 import global_enums.OperationType;
 
 public class SqlRCreator extends Thread {
