@@ -1,8 +1,11 @@
+n
 127.0.0.1
 3306
 root
 Printsessa<3
-n
-1
-1
-0
+origin
+transfer_data
+y
+10
+50
+10
