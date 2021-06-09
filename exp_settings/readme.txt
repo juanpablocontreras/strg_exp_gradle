@@ -13,12 +13,13 @@ username
 password
 table_name
 total_number_of_items
+Period
 
 Handler:
+Max type: ENUM (SIZE, NUM_IO_REQUESTS, PERIOD)
 max type num: number of IO requests per data transfer/ OR  / SIZE before transfer in bytes / OR / Fixed Period
 inter io processing time
-Max type: ENUM (SIZE, NUM_IO_REQUESTS, PERIOD)
-Outcome Type: enum (SPEED, TOTAL_TIME)
+
 
 
 Transmitter:

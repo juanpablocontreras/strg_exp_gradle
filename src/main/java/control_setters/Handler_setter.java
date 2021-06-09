@@ -28,7 +28,6 @@ public class Handler_setter {
 			this.max_type_num = Integer.parseInt(myReader.nextLine());
 			this.inter_IO_processing_time = Integer.parseInt(myReader.nextLine());
 			
-			
 			myReader.close();
 			
 		}catch(FileNotFoundException e) {

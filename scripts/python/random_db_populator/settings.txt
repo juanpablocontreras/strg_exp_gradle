@@ -3,9 +3,9 @@ n
 3306
 root
 Printsessa<3
-origin
+oldorigin
 transfer_data
 y
-10
-50
-10
+500
+3000
+500

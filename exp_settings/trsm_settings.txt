@@ -1,4 +1,4 @@
-jdbc:mysql://localhost:3306/EXP_TARGET?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false
+jdbc:mysql://localhost/olddestination?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false
 root
-root_password
-Large65535
+Printsessa<3
+transfer_data

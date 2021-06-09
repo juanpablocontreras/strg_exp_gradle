@@ -25,6 +25,8 @@ public class SqlRCreator extends Thread {
 		
 		try {
 			
+			System.out.println("Creator started");
+			
 			//getting settings
 			Creator_setter settings = new Creator_setter();
 			
@@ -81,10 +83,16 @@ public class SqlRCreator extends Thread {
 							OperationType.PUT,
 							isLastItem);
 					
+					//Wait for a certain period
+					long time_stamp = System.currentTimeMillis();
+					while((System.currentTimeMillis() - time_stamp) < settings.period) {
+						//System.out.print("waiting period...");
+						Thread.sleep(10);
+					}
 					
 					//put request in queue when space is available
 					while(!this.ioRequestQueue.add(request)) {
-						Thread.sleep(100);
+						Thread.sleep(1);
 					}
 					
 					endTime = System.currentTimeMillis();

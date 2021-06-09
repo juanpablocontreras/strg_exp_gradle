@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS origin;
-USE origin;
+CREATE DATABASE IF NOT EXISTS oldorigin;
+USE oldorigin;
 CREATE TABLE IF NOT EXISTS transfer_data(
 	id INT,
     content TEXT

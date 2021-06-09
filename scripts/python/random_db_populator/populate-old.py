@@ -54,7 +54,7 @@ origindb = mysql.connector.connect(
     port = dbport,
     user = dbuser,
     password = dbpass,
-    database = "origin",
+    database = dbname,
     use_unicode = False
 )
 
@@ -83,7 +83,7 @@ else :
         values.append(mean)
 
 #create SQL query template
-sql = "INSERT INTO " + table_name + " (id,content,dataSize) VALUES (%s,%s,%s)"
+sql = "INSERT INTO " + table_name + " (id,content) VALUES (%s,%s)"
 
 #create requests with distribution computed above
 id = 0
@@ -91,7 +91,7 @@ total_data_size = 0
 for val in values:
     size = math.floor(val)
     content = 'a'*size  #create the content
-    mycursor.execute(sql,(id,content,size))
+    mycursor.execute(sql,(id,content))
     id += 1
     total_data_size += math.floor(val)
 

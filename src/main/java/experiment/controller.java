@@ -9,7 +9,7 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 
 import control_setters.Controller_setter;
-import global_enums.Creator_Distribution;
+//import global_enums.Creator_Distribution;
 
 public class controller {
 	
@@ -39,10 +39,12 @@ public class controller {
 			startTime = System.currentTimeMillis();
 			
 			creator.start();
+			/*
 			if(setting.creator_distribution.equals(Creator_Distribution.NONE)) {
 				//wait for creator to finish putting all requests in queue
 				creator.join();
 			}
+			*/
 			
 			handler.start();
 			

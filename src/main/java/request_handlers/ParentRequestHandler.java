@@ -31,15 +31,15 @@ public class ParentRequestHandler extends Thread{
 	
 	
 	//Fields that should be in the settings:
-	protected boolean output_batch_speed = true;
+	protected boolean output_batch_speed = false;
 	protected boolean output_batch_size = false;
-	protected boolean output_connection_creation_times = true;
-	protected boolean output_close_connection_times = true;
-	protected boolean output_create_stmt_times = true;
-	protected boolean output_exec_times = true;
+	protected boolean output_connection_creation_times = false;
+	protected boolean output_close_connection_times = false;
+	protected boolean output_create_stmt_times = false;
+	protected boolean output_exec_times = false;
 	protected boolean output_io_queue_times_w = false;
 	protected int pollingTime = 100; //amount of time between unsuccessful polls
-	protected int numAttempts = 10; //number of attempts to get item from queue before proceeding to the data transfer anyway
+	protected int numAttempts = 100; //number of attempts to get item from queue before proceeding to the data transfer anyway
 	
 	//variables for control flow
 	protected boolean wasLastItemProcessed = false;
